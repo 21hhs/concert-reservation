@@ -4,29 +4,42 @@ erDiagram
     USER {
         Long id PK
         String name
-        String email
-        String password
-        LocalDateTime created_at
-        LocalDateTime updated_at
+        Long point
     }
 
     QUEUE {
-        Long id PK
+        Long queue_id PK
         Long user_id FK
         String token
+        Enum status
         LocalDateTime issued_at
         LocalDateTime expired_at
     }
 
     SEAT {
-        Long id PK
-        String seat_number
-        LocalDateTime available_date
+        Long seat_id PK
+        Long concert_schedule_id FK
+        Long seat_number
+        Long price
+        LocalDateTime reserved_at
         Boolean is_available
+    }
+    
+    CONCERT {
+        Long concert_id PK
+        String name
+    }
+    
+    CONCERT_SCHEDULE {
+        Long concert_schedule_id PK
+        Long concert_id FK
+        Long seat_number
+        Long remaining_seat_number
+        
     }
 
     RESERVATION {
-        Long id PK
+        Long reservation_id PK
         Long user_id FK
         Long seat_id FK
         LocalDateTime reservation_date
@@ -34,16 +47,16 @@ erDiagram
     }
 
     PAYMENT {
-        Long id PK
-        Long user_id FK
+        Long payment_id PK
         Long reservation_id FK
-        BigDecimal amount
         String status
+        Enum card_type
         LocalDateTime payment_date
+        LocalDateTime reservation_date
     }
-
-    WALLET {
-        Long id PK
+    
+    POINT_HISTORY {
+        Long point_history_id PK
         Long user_id FK
         BigDecimal balance
         LocalDateTime updated_at
@@ -51,7 +64,8 @@ erDiagram
 
     USER ||--o{ QUEUE : "has"
     USER ||--o{ RESERVATION : "has"
-    USER ||--o{ PAYMENT : "has"
-    USER ||--o{ WALLET : "has"
+    USER ||--o{ POINT_HISTORY : "has"
     RESERVATION }o--|| SEAT : "reserves"
     PAYMENT }o--|| RESERVATION : "pays for"
+    CONCERT ||--o{ CONCERT_SCHEDULE : "has"
+    CONCERT_SCHEDULE ||--o{ SEAT : "has"
